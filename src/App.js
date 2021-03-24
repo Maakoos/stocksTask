@@ -1,11 +1,19 @@
 import { useState, useEffect, useCallback } from "react";
+import styled from "styled-components";
 
 import SearchBar from "components/SearchBar";
+import InfoGraph from "components/InfoGraph";
+
+const AppWrapper = styled.div`
+  max-width: 1650px;
+  margin: 0 auto;
+`;
 
 function App() {
   const [inputValue, setInputValue] = useState("");
-  const [data, setData] = useState();
   const [hints, setHints] = useState([]);
+  const [graphData, setGraphData] = useState({});
+  const [globalInfo, setGlobalInfo] = useState(null);
 
   const handleOnChange = (e) => setInputValue(e.target.value);
 
@@ -13,13 +21,19 @@ function App() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch(
-        `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=IBM&interval=5min&apikey=demo`
-      );
-      console.log(response);
-      const json = await response.json();
-      console.log(json);
-      setData(json["Time Series (5min)"]);
+      let [graph, globalInfo] = await Promise.all([
+        fetch(
+          "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=IBM&interval=5min&apikey=demo"
+        ),
+        fetch(
+          "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=IBM&apikey=demo"
+        ),
+      ]);
+      const json = await graph.json();
+      setGraphData(json["Time Series (5min)"]);
+
+      const globalInfoJson = await globalInfo.json();
+      setGlobalInfo(globalInfoJson["Global Quote"]);
     } catch (error) {
       console.log(error);
     }
@@ -44,7 +58,7 @@ function App() {
   }, [inputValue, fetchHintsCallback]);
 
   return (
-    <div className="App">
+    <AppWrapper>
       <h1>Hello world!</h1>
       <SearchBar
         inputValue={inputValue}
@@ -54,7 +68,10 @@ function App() {
         setHints={setHints}
         fetchData={fetchData}
       />
-    </div>
+      {globalInfo && (
+        <InfoGraph graphData={graphData} globalInfo={globalInfo} />
+      )}
+    </AppWrapper>
   );
 }
 
