@@ -5,18 +5,25 @@ import searchIcon from "assets/search-icon.svg";
 import deleteIcon from "assets/times-circle.svg";
 
 const Form = styled.form`
-  width: 450px;
+  position: relative;
+  width: 360px;
   background-color: #f2f2f2;
   border-radius: 10px;
+
+  @media (min-width: 576px) {
+    width: 450px;
+  }
 `;
 
 const InputWrapper = styled.div`
   display: flex;
   align-items: center;
+  padding-right: 10px;
 `;
 
 const SearchInput = styled.input`
   padding: 10px 10px 10px 50px;
+  width: 100%;
   background-color: transparent;
   background-image: url(${searchIcon});
   background-size: 30px;
@@ -46,6 +53,10 @@ const ClearBtn = styled.button`
 `;
 
 const HintsList = styled.div`
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
   background-color: #fff;
 `;
 
