@@ -3,6 +3,7 @@ import styled from "styled-components";
 
 import SearchBar from "components/SearchBar";
 import InfoGraph from "components/InfoGraph";
+import CompanyOverview from "components/CompanyOverview";
 
 const AppWrapper = styled.div`
   max-width: 1650px;
@@ -14,6 +15,7 @@ function App() {
   const [hints, setHints] = useState([]);
   const [graphData, setGraphData] = useState({});
   const [globalInfo, setGlobalInfo] = useState(null);
+  const [overviewInfo, setOverviewInfo] = useState();
 
   const handleOnChange = (e) => setInputValue(e.target.value);
 
@@ -21,12 +23,15 @@ function App() {
 
   const fetchData = async () => {
     try {
-      let [graph, globalInfo] = await Promise.all([
+      let [graph, globalInfo, overview] = await Promise.all([
         fetch(
           "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=IBM&interval=5min&apikey=demo"
         ),
         fetch(
           "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=IBM&apikey=demo"
+        ),
+        fetch(
+          "https://www.alphavantage.co/query?function=OVERVIEW&symbol=IBM&apikey=demo"
         ),
       ]);
       const json = await graph.json();
@@ -34,6 +39,9 @@ function App() {
 
       const globalInfoJson = await globalInfo.json();
       setGlobalInfo(globalInfoJson["Global Quote"]);
+
+      const overviewInfoJson = await overview.json();
+      setOverviewInfo(overviewInfoJson);
     } catch (error) {
       console.log(error);
     }
@@ -71,6 +79,7 @@ function App() {
       {globalInfo && (
         <InfoGraph graphData={graphData} globalInfo={globalInfo} />
       )}
+      {overviewInfo && <CompanyOverview overviewInfo={overviewInfo} />}
     </AppWrapper>
   );
 }
