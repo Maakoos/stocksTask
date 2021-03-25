@@ -1,9 +1,11 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import styled from "styled-components";
 
 import SearchBar from "components/SearchBar";
 import InfoGraph from "components/InfoGraph";
 import CompanyOverview from "components/CompanyOverview";
+
+const API_KEY = process.env.REACT_APP_API_KEY;
 
 const AppWrapper = styled.div`
   max-width: 1650px;
@@ -21,60 +23,59 @@ function App() {
 
   const clearInputValue = () => setInputValue("");
 
-  const fetchData = async () => {
+  const fetchData = async (symbol) => {
     try {
       let [graph, globalInfo, overview] = await Promise.all([
         fetch(
-          "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=IBM&interval=5min&apikey=demo"
+          `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${symbol}&apikey=${API_KEY}`
         ),
         fetch(
-          "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=IBM&apikey=demo"
+          `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${API_KEY}`
         ),
         fetch(
-          "https://www.alphavantage.co/query?function=OVERVIEW&symbol=IBM&apikey=demo"
+          `https://www.alphavantage.co/query?function=OVERVIEW&symbol=${symbol}&apikey=${API_KEY}`
         ),
       ]);
       const json = await graph.json();
-      setGraphData(json["Time Series (5min)"]);
+      console.log(json);
+      setGraphData(json["Time Series (Daily)"]);
 
       const globalInfoJson = await globalInfo.json();
+      console.log(globalInfoJson);
       setGlobalInfo(globalInfoJson["Global Quote"]);
 
       const overviewInfoJson = await overview.json();
+      console.log(overviewInfoJson);
       setOverviewInfo(overviewInfoJson);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const fetchHintsCallback = useCallback(async () => {
+  const fetchHints = useCallback(async () => {
     try {
       const response = await fetch(
-        `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=tesco&apikey=demo`
+        `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${inputValue}&apikey=${API_KEY}`
       );
       const json = await response.json();
+      console.log(json);
       setHints(json.bestMatches);
     } catch (error) {
       console.log(error);
     }
-  }, []);
-
-  useEffect(() => {
-    if (inputValue.length > 2) {
-      fetchHintsCallback();
-    }
-  }, [inputValue, fetchHintsCallback]);
+  }, [inputValue]);
 
   return (
     <AppWrapper>
-      <h1>Hello world!</h1>
       <SearchBar
         inputValue={inputValue}
         changeInputValue={handleOnChange}
         clearInputValue={clearInputValue}
         hints={hints}
         setHints={setHints}
+        fetchHints={fetchHints}
         fetchData={fetchData}
+        setInputValue={setInputValue}
       />
       {globalInfo && (
         <InfoGraph graphData={graphData} globalInfo={globalInfo} />
