@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import styled, { css } from "styled-components";
 
 import searchIcon from "assets/search-icon.svg";
@@ -6,11 +6,13 @@ import deleteIcon from "assets/times-circle.svg";
 
 const Form = styled.form`
   position: relative;
+  margin-top: 30px;
   width: 360px;
   background-color: #f2f2f2;
   border-radius: 10px;
 
   @media (min-width: 576px) {
+    margin-left: 50px;
     width: 450px;
   }
 `;
@@ -30,6 +32,7 @@ const SearchInput = styled.input`
   background-repeat: no-repeat;
   background-position: 10px center;
   font-size: 30px;
+  text-transform: uppercase;
   border: none;
   outline: transparent;
 `;
@@ -77,15 +80,22 @@ const CompanyName = styled.p`
   text-align: right;
 `;
 
+let timeout;
+
 function SearchBar({
   inputValue,
   changeInputValue,
   clearInputValue,
   hints,
   setHints,
+  fetchHints,
   fetchData,
+  setInputValue,
 }) {
   const [visibleClearButton, setVisibleClearButton] = useState(false);
+
+  const inputRef = useRef();
+  const { current } = inputRef;
 
   const handleOnClick = (e) => {
     e.preventDefault();
@@ -93,12 +103,31 @@ function SearchBar({
     setVisibleClearButton(false);
   };
 
-  const handleOnClickHint = (e) => {};
-
   const handleOnSubmit = (e) => {
     e.preventDefault();
-    fetchData();
+    const symbolFromInput = e.target.elements[0].value.toUpperCase();
+    fetchData(symbolFromInput);
   };
+
+  const handleOnClickHint = (e) => {
+    const symbol = e.target.firstChild.textContent;
+    setInputValue(symbol);
+    fetchData(symbol);
+  };
+
+  const throttlingFetchHints = useCallback(() => {
+    if (inputValue.length > 3) {
+      fetchHints();
+    }
+  }, [inputValue.length, fetchHints]);
+
+  const timeOutFetch = useCallback(() => {
+    if (timeout) {
+      clearTimeout(timeout);
+      timeout = null;
+    }
+    timeout = setTimeout(throttlingFetchHints, 5000);
+  }, [throttlingFetchHints]);
 
   useEffect(() => {
     if (inputValue.length) {
@@ -107,7 +136,11 @@ function SearchBar({
       setVisibleClearButton(false);
       setHints([]);
     }
-  }, [inputValue, setHints]);
+
+    current?.addEventListener("keypress", timeOutFetch);
+
+    return () => current?.removeEventListener("keypress", timeOutFetch);
+  }, [inputValue, setHints, throttlingFetchHints, timeOutFetch, current]);
   return (
     <Form onSubmit={handleOnSubmit}>
       <InputWrapper>
@@ -115,6 +148,7 @@ function SearchBar({
           type="text"
           value={inputValue}
           onChange={changeInputValue}
+          ref={inputRef}
         />
         <ClearBtn
           onClick={handleOnClick}
