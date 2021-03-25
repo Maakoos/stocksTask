@@ -69,11 +69,11 @@ const SectionHeader = styled.div`
   }
 
   @media (min-width: 1200px) {
-    padding: 15px 100px 15px 50px;
+    padding: 15px 100px;
   }
 `;
 
-const CompanyName = styled.h1`
+const CompanySymbol = styled.h1`
   font-size: 18px;
   font-weight: 500;
 
@@ -81,8 +81,6 @@ const CompanyName = styled.h1`
     font-size: 25px;
   }
 `;
-
-const CompanySymbol = styled.span``;
 
 const Price = styled.span`
   margin-left: auto;
@@ -99,7 +97,7 @@ const Price = styled.span`
 
 const ChangePercent = styled.span`
   margin: 0 10px;
-  color: #f40000;
+  color: #00944d;
   font-size: 18px;
   font-weight: 700;
 
@@ -111,6 +109,12 @@ const ChangePercent = styled.span`
   @media (min-width: 768px) {
     font-size: 32px;
   }
+
+  ${({ isNegative }) =>
+    isNegative &&
+    css`
+      color: #f40000;
+    `}
 `;
 
 const MinMaxWrapper = styled.div`
@@ -133,6 +137,7 @@ function InfoGraph({ graphData, globalInfo }) {
   const volumen = globalInfo["06. volume"];
   const openingRate = globalInfo["02. open"];
   const closingRate = globalInfo["08. previous close"];
+  const symbol = globalInfo["01. symbol"];
 
   const sliced = Object.fromEntries(Object.entries(graphData).slice(0, 20));
 
@@ -140,7 +145,7 @@ function InfoGraph({ graphData, globalInfo }) {
   const volumensArray = [];
   const date = [];
   for (const [key, v] of Object.entries(sliced)) {
-    date.push(key.slice(-8, -3));
+    date.push(key.slice(-5));
     for (const [key, value] of Object.entries(v)) {
       if (key === "2. high") {
         priceArray.push(value);
@@ -200,12 +205,11 @@ function InfoGraph({ graphData, globalInfo }) {
   return (
     <SectionWrapper>
       <SectionHeader>
-        <CompanyName>
-          Company name
-          <CompanySymbol> (IBM)</CompanySymbol>
-        </CompanyName>
+        <CompanySymbol>({symbol})</CompanySymbol>
         <Price>{formattedPrice}</Price>
-        <ChangePercent>{formattedPercentages}</ChangePercent>
+        <ChangePercent isNegative={formattedPercentages.startsWith("-")}>
+          {formattedPercentages}
+        </ChangePercent>
         <MinMaxWrapper>
           <span>min {formattedMinValue}</span>
           <span>max {formattedMaxValue}</span>
