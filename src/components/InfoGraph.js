@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Line } from "react-chartjs-2";
 import styled, { css } from "styled-components";
 
@@ -128,7 +129,42 @@ const MinMaxWrapper = styled.div`
   }
 `;
 
-function InfoGraph({ graphData, globalInfo }) {
+const ButtonsList = styled.ul`
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+  list-style: none;
+
+  @media (min-width: 992px) {
+    justify-content: flex-start;
+    padding-left: 100px;
+  }
+`;
+
+const ListItem = styled.li`
+  margin-right: 5px;
+
+  &:nth-last-child(1) {
+    margin-right: 0;
+  }
+`;
+
+const GraphBtn = styled.button`
+  padding: 5px 10px;
+  background-color: #0090d5;
+  color: #fff;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+`;
+
+const DAILY = "DAILY";
+const MONTHLY = "MONTHLY";
+
+function InfoGraph({ graphData, globalInfo, monthlyGraphData }) {
+  const [days, setDays] = useState(7);
+  const [timeline, setTimeline] = useState(DAILY);
+
   const price = globalInfo["05. price"];
   const formattedPrice = parseFloat(price);
   const formattedPercentages = globalInfo["10. change percent"];
@@ -139,7 +175,12 @@ function InfoGraph({ graphData, globalInfo }) {
   const closingRate = globalInfo["08. previous close"];
   const symbol = globalInfo["01. symbol"];
 
-  const sliced = Object.fromEntries(Object.entries(graphData).slice(0, 20));
+  const sliced = Object.fromEntries(
+    Object.entries(timeline === DAILY ? graphData : monthlyGraphData).slice(
+      0,
+      days
+    )
+  );
 
   const priceArray = [];
   const volumensArray = [];
@@ -157,6 +198,11 @@ function InfoGraph({ graphData, globalInfo }) {
   priceArray.reverse();
   volumensArray.reverse();
   date.reverse();
+
+  const changeGraph = (timeline, days) => {
+    setTimeline(timeline);
+    setDays(days);
+  };
 
   const data = {
     labels: [...date],
@@ -246,6 +292,29 @@ function InfoGraph({ graphData, globalInfo }) {
           </InfoItem>
         </InfoBox>
       </ContentWrapper>
+      <ButtonsList>
+        <ListItem>
+          <GraphBtn onClick={() => changeGraph(DAILY, 7)}>7 D</GraphBtn>
+        </ListItem>
+        <ListItem>
+          <GraphBtn onClick={() => changeGraph(DAILY, 14)}>14 D</GraphBtn>
+        </ListItem>
+        <ListItem>
+          <GraphBtn onClick={() => changeGraph(DAILY, 30)}>30 D</GraphBtn>
+        </ListItem>
+        <ListItem>
+          <GraphBtn onClick={() => changeGraph(MONTHLY, 3)}>3 M</GraphBtn>
+        </ListItem>
+        <ListItem>
+          <GraphBtn onClick={() => changeGraph(MONTHLY, 6)}>6 M</GraphBtn>
+        </ListItem>
+        <ListItem>
+          <GraphBtn onClick={() => changeGraph(MONTHLY, 9)}>9 M</GraphBtn>
+        </ListItem>
+        <ListItem>
+          <GraphBtn onClick={() => changeGraph(MONTHLY, 12)}>12 M</GraphBtn>
+        </ListItem>
+      </ButtonsList>
     </SectionWrapper>
   );
 }

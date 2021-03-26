@@ -18,6 +18,7 @@ function App() {
   const [graphData, setGraphData] = useState({});
   const [globalInfo, setGlobalInfo] = useState(null);
   const [overviewInfo, setOverviewInfo] = useState();
+  const [monthlyGraphData, setMonthlyGraphData] = useState({});
 
   const handleOnChange = (e) => setInputValue(e.target.value);
 
@@ -25,9 +26,12 @@ function App() {
 
   const fetchData = async (symbol) => {
     try {
-      let [graph, globalInfo, overview] = await Promise.all([
+      let [graph, graphMonth, globalInfo, overview] = await Promise.all([
         fetch(
           `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${symbol}&apikey=${API_KEY}`
+        ),
+        fetch(
+          `https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol=${symbol}&apikey=${API_KEY}`
         ),
         fetch(
           `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${API_KEY}`
@@ -39,6 +43,10 @@ function App() {
       const json = await graph.json();
       console.log(json);
       setGraphData(json["Time Series (Daily)"]);
+
+      const graphMonthJson = await graphMonth.json();
+      console.log(graphMonthJson);
+      setMonthlyGraphData(graphMonthJson["Monthly Time Series"]);
 
       const globalInfoJson = await globalInfo.json();
       console.log(globalInfoJson);
@@ -85,7 +93,11 @@ function App() {
         stopFetchHints={stopFetchHints}
       />
       {globalInfo && (
-        <InfoGraph graphData={graphData} globalInfo={globalInfo} />
+        <InfoGraph
+          graphData={graphData}
+          globalInfo={globalInfo}
+          monthlyGraphData={monthlyGraphData}
+        />
       )}
       {overviewInfo && <CompanyOverview overviewInfo={overviewInfo} />}
     </AppWrapper>
