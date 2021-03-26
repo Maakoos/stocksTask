@@ -47,15 +47,21 @@ function App() {
       const overviewInfoJson = await overview.json();
       console.log(overviewInfoJson);
       setOverviewInfo(overviewInfoJson);
+      setHints([]);
     } catch (error) {
       console.log(error);
     }
   };
 
+  const controller = new AbortController();
+  const signal = controller.signal;
+  const stopFetchHints = () => controller.abort();
+
   const fetchHints = useCallback(async () => {
     try {
       const response = await fetch(
-        `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${inputValue}&apikey=${API_KEY}`
+        `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${inputValue}&apikey=${API_KEY}`,
+        { signal: signal }
       );
       const json = await response.json();
       console.log(json);
@@ -76,6 +82,7 @@ function App() {
         fetchHints={fetchHints}
         fetchData={fetchData}
         setInputValue={setInputValue}
+        stopFetchHints={stopFetchHints}
       />
       {globalInfo && (
         <InfoGraph graphData={graphData} globalInfo={globalInfo} />

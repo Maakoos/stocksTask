@@ -91,6 +91,7 @@ function SearchBar({
   fetchHints,
   fetchData,
   setInputValue,
+  stopFetchHints,
 }) {
   const [visibleClearButton, setVisibleClearButton] = useState(false);
 
@@ -107,6 +108,7 @@ function SearchBar({
     e.preventDefault();
     const symbolFromInput = e.target.elements[0].value.toUpperCase();
     fetchData(symbolFromInput);
+    stopFetchHints();
   };
 
   const handleOnClickHint = (e) => {
