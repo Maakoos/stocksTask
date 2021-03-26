@@ -4,6 +4,7 @@ import styled from "styled-components";
 import SearchBar from "components/SearchBar";
 import InfoGraph from "components/InfoGraph";
 import CompanyOverview from "components/CompanyOverview";
+import ErrorMessage from "components/ErrorMessage";
 
 const API_KEY = process.env.REACT_APP_API_KEY;
 
@@ -19,10 +20,13 @@ function App() {
   const [globalInfo, setGlobalInfo] = useState(null);
   const [overviewInfo, setOverviewInfo] = useState();
   const [monthlyGraphData, setMonthlyGraphData] = useState({});
+  const [errorMessageIsVisible, setErrorMessageIsVisible] = useState(false);
 
   const handleOnChange = (e) => setInputValue(e.target.value);
 
   const clearInputValue = () => setInputValue("");
+
+  const closeErrorMessage = () => setErrorMessageIsVisible(false);
 
   const fetchData = async (symbol) => {
     try {
@@ -42,19 +46,27 @@ function App() {
       ]);
       const json = await graph.json();
       console.log(json);
-      setGraphData(json["Time Series (Daily)"]);
 
-      const graphMonthJson = await graphMonth.json();
-      console.log(graphMonthJson);
-      setMonthlyGraphData(graphMonthJson["Monthly Time Series"]);
+      const size = Object.keys(json).length;
 
-      const globalInfoJson = await globalInfo.json();
-      console.log(globalInfoJson);
-      setGlobalInfo(globalInfoJson["Global Quote"]);
+      if (size > 1) {
+        setGraphData(json["Time Series (Daily)"]);
 
-      const overviewInfoJson = await overview.json();
-      console.log(overviewInfoJson);
-      setOverviewInfo(overviewInfoJson);
+        const graphMonthJson = await graphMonth.json();
+        console.log(graphMonthJson);
+        setMonthlyGraphData(graphMonthJson["Monthly Time Series"]);
+
+        const globalInfoJson = await globalInfo.json();
+        console.log(globalInfoJson);
+        setGlobalInfo(globalInfoJson["Global Quote"]);
+
+        const overviewInfoJson = await overview.json();
+        console.log(overviewInfoJson);
+        setOverviewInfo(overviewInfoJson);
+      } else {
+        setErrorMessageIsVisible(true);
+      }
+
       setHints([]);
     } catch (error) {
       console.log(error);
@@ -92,14 +104,20 @@ function App() {
         setInputValue={setInputValue}
         stopFetchHints={stopFetchHints}
       />
-      {globalInfo && (
+      {globalInfo && graphData && monthlyGraphData && (
         <InfoGraph
           graphData={graphData}
           globalInfo={globalInfo}
           monthlyGraphData={monthlyGraphData}
         />
       )}
-      {overviewInfo && <CompanyOverview overviewInfo={overviewInfo} />}
+      {overviewInfo && globalInfo && graphData && monthlyGraphData && (
+        <CompanyOverview overviewInfo={overviewInfo} />
+      )}
+      <ErrorMessage
+        closeErrorMessage={closeErrorMessage}
+        errorMessageIsVisible={errorMessageIsVisible}
+      />
     </AppWrapper>
   );
 }
