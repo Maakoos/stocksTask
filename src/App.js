@@ -59,7 +59,6 @@ function App() {
       ]);
       current.blur();
       const json = await graph.json();
-      console.log(json);
 
       const size = Object.keys(json).length;
 
@@ -68,15 +67,12 @@ function App() {
         setGraphData(json["Time Series (Daily)"]);
 
         const graphMonthJson = await graphMonth.json();
-        console.log(graphMonthJson);
         setMonthlyGraphData(graphMonthJson["Monthly Time Series"]);
 
         const globalInfoJson = await globalInfo.json();
-        console.log(globalInfoJson);
         setGlobalInfo(globalInfoJson["Global Quote"]);
 
         const overviewInfoJson = await overview.json();
-        console.log(overviewInfoJson);
         setOverviewInfo(overviewInfoJson);
       } else {
         setErrorMessageIsVisible(true);
@@ -100,7 +96,6 @@ function App() {
         { signal: signal }
       );
       const json = await response.json();
-      console.log(json);
       setHints(json.bestMatches);
     } catch (error) {
       console.log(error);
@@ -108,7 +103,7 @@ function App() {
   }, [inputValue]);
 
   const throttlingFetchHints = useCallback(() => {
-    if (inputValue.length > 3) {
+    if (inputValue.length > 2) {
       fetchHints();
     }
   }, [inputValue.length, fetchHints]);

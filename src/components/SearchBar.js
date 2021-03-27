@@ -56,7 +56,7 @@ const ClearBtn = styled.button`
     `}
 `;
 
-const HintsList = styled.div`
+const HintsList = styled.ul`
   position: absolute;
   top: 100%;
   left: 0;
@@ -64,7 +64,7 @@ const HintsList = styled.div`
   background-color: #fff;
 `;
 
-const HintWrapper = styled.div`
+const HintWrapper = styled.li`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -76,7 +76,7 @@ const CompanySymbol = styled.span`
   font-weight: 700;
 `;
 
-const CompanyName = styled.p`
+const CompanyName = styled.span`
   max-width: 50%;
   text-align: right;
 `;

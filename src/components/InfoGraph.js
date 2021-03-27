@@ -31,11 +31,12 @@ const GraphWrapper = styled.div`
   }
 `;
 
-const InfoBox = styled.div`
-  margin-top: 30px;
-
+const InfoBoxList = styled.ul`
+  display: none;
   @media (min-width: 992px) {
+    display: block;
     margin-left: 30px;
+    margin-top: 30px;
   }
 
   @media (min-width: 1400px) {
@@ -43,7 +44,7 @@ const InfoBox = styled.div`
   }
 `;
 
-const InfoItem = styled.div`
+const InfoItem = styled.li`
   display: flex;
   justify-content: space-between;
   margin-bottom: 15px;
@@ -275,7 +276,7 @@ function InfoGraph({
         <GraphWrapper>
           <Line data={data} options={options} />
         </GraphWrapper>
-        <InfoBox>
+        <InfoBoxList>
           <InfoItem>
             <InfoTitle>Purchase offer</InfoTitle>
             <span>{price}</span>
@@ -296,7 +297,7 @@ function InfoGraph({
             <InfoTitle>Closing rate</InfoTitle>
             <span>{closingRate}</span>
           </InfoItem>
-        </InfoBox>
+        </InfoBoxList>
       </ContentWrapper>
       <ButtonsList>
         <ListItem>
