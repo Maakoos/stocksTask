@@ -121,7 +121,7 @@ function CompanyOverview({ overviewInfo }) {
     <SectionWrapper>
       <header>
         <Heading>
-          {Name} ({Symbol})
+          {Name} {Symbol ? `(${Symbol})` : "n/a"}
         </Heading>
       </header>
       <InfoTable>
@@ -129,13 +129,13 @@ function CompanyOverview({ overviewInfo }) {
           {dataArray?.map(({ title, value }, index) => (
             <tr key={index}>
               <InfoTitle>{title}:</InfoTitle>
-              <InfoValue>{value}</InfoValue>
+              <InfoValue>{value ?? "n/a"}</InfoValue>
             </tr>
           ))}
         </tbody>
       </InfoTable>
       <Heading>About Company</Heading>
-      <DescriptionWrapper>{Description}</DescriptionWrapper>
+      <DescriptionWrapper>{Description ?? "no description"}</DescriptionWrapper>
     </SectionWrapper>
   );
 }
