@@ -1,0 +1,21 @@
+{
+  "files": {
+    "main.js": "/stocksTask/static/js/main.a6d96b00.chunk.js",
+    "main.js.map": "/stocksTask/static/js/main.a6d96b00.chunk.js.map",
+    "runtime-main.js": "/stocksTask/static/js/runtime-main.f4471378.js",
+    "runtime-main.js.map": "/stocksTask/static/js/runtime-main.f4471378.js.map",
+    "static/js/2.0b95b85f.chunk.js": "/stocksTask/static/js/2.0b95b85f.chunk.js",
+    "static/js/2.0b95b85f.chunk.js.map": "/stocksTask/static/js/2.0b95b85f.chunk.js.map",
+    "static/js/3.f62da220.chunk.js": "/stocksTask/static/js/3.f62da220.chunk.js",
+    "static/js/3.f62da220.chunk.js.map": "/stocksTask/static/js/3.f62da220.chunk.js.map",
+    "index.html": "/stocksTask/index.html",
+    "static/js/2.0b95b85f.chunk.js.LICENSE.txt": "/stocksTask/static/js/2.0b95b85f.chunk.js.LICENSE.txt",
+    "static/media/search-icon.cc51b702.svg": "/stocksTask/static/media/search-icon.cc51b702.svg",
+    "static/media/times-circle.13560fb8.svg": "/stocksTask/static/media/times-circle.13560fb8.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.f4471378.js",
+    "static/js/2.0b95b85f.chunk.js",
+    "static/js/main.a6d96b00.chunk.js"
+  ]
+}
