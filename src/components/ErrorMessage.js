@@ -4,7 +4,7 @@ const Wrapper = styled.div`
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -250%);
+  transform: translate(-50%, -300%);
 
   display: flex;
   flex-direction: column;
@@ -33,9 +33,12 @@ const Message = styled.p`
 `;
 
 const SmallMessage = styled.p`
+  padding: 0 35px;
+  text-align: center;
   color: #5e5e5e;
   font-size: 10px;
   letter-spacing: 1px;
+  line-height: 1.5;
 `;
 
 const CloseBtn = styled.button`
@@ -56,7 +59,10 @@ function ErrorMessage({ closeErrorMessage, errorMessageIsVisible }) {
   return (
     <Wrapper isVisible={errorMessageIsVisible}>
       <Message>ERROR !</Message>
-      <SmallMessage>oh no, something went wrong.</SmallMessage>
+      <SmallMessage>
+        oh no, something went wrong. Wait a minute or type other symbol and try
+        again
+      </SmallMessage>
       <CloseBtn onClick={closeErrorMessage}>Try again</CloseBtn>
     </Wrapper>
   );
