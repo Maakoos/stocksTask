@@ -21,12 +21,15 @@ function App() {
   const [overviewInfo, setOverviewInfo] = useState();
   const [monthlyGraphData, setMonthlyGraphData] = useState({});
   const [errorMessageIsVisible, setErrorMessageIsVisible] = useState(false);
+  const [timelineValue, setTimelineValue] = useState(7);
 
   const handleOnChange = (e) => setInputValue(e.target.value);
 
   const clearInputValue = () => setInputValue("");
 
   const closeErrorMessage = () => setErrorMessageIsVisible(false);
+
+  const changeTimeline = (value) => setTimelineValue(value);
 
   const fetchData = async (symbol) => {
     try {
@@ -68,6 +71,7 @@ function App() {
       }
 
       setHints([]);
+      setTimelineValue(7);
     } catch (error) {
       console.log(error);
     }
@@ -109,6 +113,8 @@ function App() {
           graphData={graphData}
           globalInfo={globalInfo}
           monthlyGraphData={monthlyGraphData}
+          timelineValue={timelineValue}
+          changeTimeline={changeTimeline}
         />
       )}
       {overviewInfo && globalInfo && graphData && monthlyGraphData && (

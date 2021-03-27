@@ -161,8 +161,13 @@ const GraphBtn = styled.button`
 const DAILY = "DAILY";
 const MONTHLY = "MONTHLY";
 
-function InfoGraph({ graphData, globalInfo, monthlyGraphData }) {
-  const [days, setDays] = useState(7);
+function InfoGraph({
+  graphData,
+  globalInfo,
+  monthlyGraphData,
+  timelineValue,
+  changeTimeline,
+}) {
   const [timeline, setTimeline] = useState(DAILY);
 
   const price = globalInfo["05. price"];
@@ -178,7 +183,7 @@ function InfoGraph({ graphData, globalInfo, monthlyGraphData }) {
   const sliced = Object.fromEntries(
     Object.entries(timeline === DAILY ? graphData : monthlyGraphData).slice(
       0,
-      days
+      timelineValue
     )
   );
 
@@ -201,8 +206,12 @@ function InfoGraph({ graphData, globalInfo, monthlyGraphData }) {
 
   const changeGraph = (timeline, days) => {
     setTimeline(timeline);
-    setDays(days);
+    changeTimeline(days);
   };
+
+  const renderGraphTitle = `${timelineValue} ${
+    timeline === DAILY ? "days" : "months"
+  }`;
 
   const data = {
     labels: [...date],
@@ -227,6 +236,11 @@ function InfoGraph({ graphData, globalInfo, monthlyGraphData }) {
   };
 
   const options = {
+    title: {
+      display: true,
+      text: renderGraphTitle,
+      fontSize: 16,
+    },
     scales: {
       yAxes: [
         {
