@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect } from "react";
 import styled, { css } from "styled-components";
 
 import searchIcon from "assets/search-icon.svg";
@@ -47,6 +47,7 @@ const ClearBtn = styled.button`
   background-position: center;
   border: none;
   border-radius: 50%;
+  cursor: pointer;
 
   ${({ isVisible }) =>
     isVisible &&
@@ -80,23 +81,18 @@ const CompanyName = styled.p`
   text-align: right;
 `;
 
-let timeout;
-
 function SearchBar({
   inputValue,
   changeInputValue,
   clearInputValue,
   hints,
   setHints,
-  fetchHints,
   fetchData,
   setInputValue,
   stopFetchHints,
+  inputRef,
 }) {
   const [visibleClearButton, setVisibleClearButton] = useState(false);
-
-  const inputRef = useRef();
-  const { current } = inputRef;
 
   const handleOnClick = (e) => {
     e.preventDefault();
@@ -117,20 +113,6 @@ function SearchBar({
     fetchData(symbol);
   };
 
-  const throttlingFetchHints = useCallback(() => {
-    if (inputValue.length > 3) {
-      fetchHints();
-    }
-  }, [inputValue.length, fetchHints]);
-
-  const timeOutFetch = useCallback(() => {
-    if (timeout) {
-      clearTimeout(timeout);
-      timeout = null;
-    }
-    timeout = setTimeout(throttlingFetchHints, 5000);
-  }, [throttlingFetchHints]);
-
   useEffect(() => {
     if (inputValue.length) {
       setVisibleClearButton(true);
@@ -138,11 +120,7 @@ function SearchBar({
       setVisibleClearButton(false);
       setHints([]);
     }
-
-    current?.addEventListener("keypress", timeOutFetch);
-
-    return () => current?.removeEventListener("keypress", timeOutFetch);
-  }, [inputValue, setHints, throttlingFetchHints, timeOutFetch, current]);
+  }, [inputValue, setHints]);
   return (
     <Form onSubmit={handleOnSubmit}>
       <InputWrapper>

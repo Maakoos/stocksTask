@@ -1,6 +1,7 @@
-import { useState } from "react";
 import { Line } from "react-chartjs-2";
 import styled, { css } from "styled-components";
+
+import { DAILY, MONTHLY } from "App";
 
 const SectionWrapper = styled.section`
   margin-top: 50px;
@@ -151,25 +152,29 @@ const ListItem = styled.li`
 
 const GraphBtn = styled.button`
   padding: 5px 10px;
-  background-color: #0090d5;
+  background-color: #005c89;
   color: #fff;
   font-size: 14px;
   border: none;
+  outline: transparent;
   cursor: pointer;
-`;
 
-const DAILY = "DAILY";
-const MONTHLY = "MONTHLY";
+  ${({ isActive }) =>
+    isActive &&
+    css`
+      background-color: #23b8ff;
+    `}
+`;
 
 function InfoGraph({
   graphData,
   globalInfo,
   monthlyGraphData,
   timelineValue,
+  changeTimelineValue,
+  timeline,
   changeTimeline,
 }) {
-  const [timeline, setTimeline] = useState(DAILY);
-
   const price = globalInfo["05. price"];
   const formattedPrice = parseFloat(price);
   const formattedPercentages = globalInfo["10. change percent"];
@@ -205,13 +210,9 @@ function InfoGraph({
   date.reverse();
 
   const changeGraph = (timeline, days) => {
-    setTimeline(timeline);
-    changeTimeline(days);
+    changeTimeline(timeline);
+    changeTimelineValue(days);
   };
-
-  const renderGraphTitle = `${timelineValue} ${
-    timeline === DAILY ? "days" : "months"
-  }`;
 
   const data = {
     labels: [...date],
@@ -236,11 +237,6 @@ function InfoGraph({
   };
 
   const options = {
-    title: {
-      display: true,
-      text: renderGraphTitle,
-      fontSize: 16,
-    },
     scales: {
       yAxes: [
         {
@@ -284,22 +280,18 @@ function InfoGraph({
             <InfoTitle>Purchase offer</InfoTitle>
             <span>{price}</span>
           </InfoItem>
-
           <InfoItem>
             <InfoTitle>Sale offer</InfoTitle>
             <span>{price}</span>
           </InfoItem>
-
           <InfoItem small>
             <InfoTitle>Trading volume (quan)</InfoTitle>
             <span>{volumen}</span>
           </InfoItem>
-
           <InfoItem small>
             <InfoTitle>Opening rate</InfoTitle>
             <span>{openingRate}</span>
           </InfoItem>
-
           <InfoItem small>
             <InfoTitle>Closing rate</InfoTitle>
             <span>{closingRate}</span>
@@ -308,25 +300,60 @@ function InfoGraph({
       </ContentWrapper>
       <ButtonsList>
         <ListItem>
-          <GraphBtn onClick={() => changeGraph(DAILY, 7)}>7 D</GraphBtn>
+          <GraphBtn
+            onClick={() => changeGraph(DAILY, 7)}
+            isActive={timeline === DAILY && timelineValue === 7}
+          >
+            7 D
+          </GraphBtn>
         </ListItem>
         <ListItem>
-          <GraphBtn onClick={() => changeGraph(DAILY, 14)}>14 D</GraphBtn>
+          <GraphBtn
+            onClick={() => changeGraph(DAILY, 14)}
+            isActive={timeline === DAILY && timelineValue === 14}
+          >
+            14 D
+          </GraphBtn>
         </ListItem>
         <ListItem>
-          <GraphBtn onClick={() => changeGraph(DAILY, 30)}>30 D</GraphBtn>
+          <GraphBtn
+            onClick={() => changeGraph(DAILY, 30)}
+            isActive={timeline === DAILY && timelineValue === 30}
+          >
+            30 D
+          </GraphBtn>
         </ListItem>
         <ListItem>
-          <GraphBtn onClick={() => changeGraph(MONTHLY, 3)}>3 M</GraphBtn>
+          <GraphBtn
+            onClick={() => changeGraph(MONTHLY, 3)}
+            isActive={timeline === MONTHLY && timelineValue === 3}
+          >
+            3 M
+          </GraphBtn>
         </ListItem>
         <ListItem>
-          <GraphBtn onClick={() => changeGraph(MONTHLY, 6)}>6 M</GraphBtn>
+          <GraphBtn
+            onClick={() => changeGraph(MONTHLY, 6)}
+            isActive={timeline === MONTHLY && timelineValue === 6}
+          >
+            6 M
+          </GraphBtn>
         </ListItem>
         <ListItem>
-          <GraphBtn onClick={() => changeGraph(MONTHLY, 9)}>9 M</GraphBtn>
+          <GraphBtn
+            onClick={() => changeGraph(MONTHLY, 9)}
+            isActive={timeline === MONTHLY && timelineValue === 9}
+          >
+            9 M
+          </GraphBtn>
         </ListItem>
         <ListItem>
-          <GraphBtn onClick={() => changeGraph(MONTHLY, 12)}>12 M</GraphBtn>
+          <GraphBtn
+            onClick={() => changeGraph(MONTHLY, 12)}
+            isActive={timeline === MONTHLY && timelineValue === 12}
+          >
+            12 M
+          </GraphBtn>
         </ListItem>
       </ButtonsList>
     </SectionWrapper>

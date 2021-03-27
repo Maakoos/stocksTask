@@ -53,6 +53,7 @@ const CloseBtn = styled.button`
   box-shadow: 2px 2px 10px rgb(119 119 119 / 50%);
   border: none;
   outline: transparent;
+  cursor: pointer;
 `;
 
 function ErrorMessage({ closeErrorMessage, errorMessageIsVisible }) {

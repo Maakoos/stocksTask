@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import styled from "styled-components";
 
 import SearchBar from "components/SearchBar";
@@ -7,11 +7,15 @@ import CompanyOverview from "components/CompanyOverview";
 import ErrorMessage from "components/ErrorMessage";
 
 const API_KEY = process.env.REACT_APP_API_KEY;
+export const DAILY = "DAILY";
+export const MONTHLY = "MONTHLY";
 
 const AppWrapper = styled.div`
   max-width: 1650px;
   margin: 0 auto;
 `;
+
+let timeout;
 
 function App() {
   const [inputValue, setInputValue] = useState("");
@@ -22,6 +26,10 @@ function App() {
   const [monthlyGraphData, setMonthlyGraphData] = useState({});
   const [errorMessageIsVisible, setErrorMessageIsVisible] = useState(false);
   const [timelineValue, setTimelineValue] = useState(7);
+  const [timeline, setTimeline] = useState(DAILY);
+
+  const inputRef = useRef();
+  const { current } = inputRef;
 
   const handleOnChange = (e) => setInputValue(e.target.value);
 
@@ -29,7 +37,9 @@ function App() {
 
   const closeErrorMessage = () => setErrorMessageIsVisible(false);
 
-  const changeTimeline = (value) => setTimelineValue(value);
+  const changeTimelineValue = (value) => setTimelineValue(value);
+
+  const changeTimeline = (value) => setTimeline(value);
 
   const fetchData = async (symbol) => {
     try {
@@ -47,12 +57,14 @@ function App() {
           `https://www.alphavantage.co/query?function=OVERVIEW&symbol=${symbol}&apikey=${API_KEY}`
         ),
       ]);
+      current.blur();
       const json = await graph.json();
       console.log(json);
 
       const size = Object.keys(json).length;
 
       if (size > 1) {
+        setTimeline(DAILY);
         setGraphData(json["Time Series (Daily)"]);
 
         const graphMonthJson = await graphMonth.json();
@@ -95,6 +107,26 @@ function App() {
     }
   }, [inputValue]);
 
+  const throttlingFetchHints = useCallback(() => {
+    if (inputValue.length > 3) {
+      fetchHints();
+    }
+  }, [inputValue.length, fetchHints]);
+
+  const timeOutFetch = useCallback(() => {
+    if (timeout) {
+      clearTimeout(timeout);
+      timeout = null;
+    }
+    timeout = setTimeout(throttlingFetchHints, 2000);
+  }, [throttlingFetchHints]);
+
+  useEffect(() => {
+    current?.addEventListener("keypress", timeOutFetch);
+
+    return () => current?.removeEventListener("keypress", timeOutFetch);
+  }, [current, timeOutFetch]);
+
   return (
     <AppWrapper>
       <SearchBar
@@ -103,10 +135,10 @@ function App() {
         clearInputValue={clearInputValue}
         hints={hints}
         setHints={setHints}
-        fetchHints={fetchHints}
         fetchData={fetchData}
         setInputValue={setInputValue}
         stopFetchHints={stopFetchHints}
+        inputRef={inputRef}
       />
       {globalInfo && graphData && monthlyGraphData && (
         <InfoGraph
@@ -114,6 +146,8 @@ function App() {
           globalInfo={globalInfo}
           monthlyGraphData={monthlyGraphData}
           timelineValue={timelineValue}
+          changeTimelineValue={changeTimelineValue}
+          timeline={timeline}
           changeTimeline={changeTimeline}
         />
       )}
