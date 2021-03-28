@@ -70,6 +70,7 @@ const HintWrapper = styled.li`
   align-items: center;
   padding: 10px 20px;
   border-bottom: 2px solid #e8e8e8;
+  cursor: pointer;
 `;
 
 const CompanySymbol = styled.span`

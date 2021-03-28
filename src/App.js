@@ -5,6 +5,7 @@ import SearchBar from "components/SearchBar";
 import InfoGraph from "components/InfoGraph";
 import CompanyOverview from "components/CompanyOverview";
 import ErrorMessage from "components/ErrorMessage";
+import Loader from "components/Loader";
 
 const API_KEY = process.env.REACT_APP_API_KEY;
 export const DAILY = "DAILY";
@@ -27,6 +28,7 @@ function App() {
   const [errorMessageIsVisible, setErrorMessageIsVisible] = useState(false);
   const [timelineValue, setTimelineValue] = useState(7);
   const [timeline, setTimeline] = useState(DAILY);
+  const [loaderIsVisible, setLoaderIsVisible] = useState(false);
 
   const inputRef = useRef();
   const { current } = inputRef;
@@ -58,11 +60,15 @@ function App() {
         ),
       ]);
       current.blur();
+      setLoaderIsVisible(true);
       const json = await graph.json();
 
       const size = Object.keys(json).length;
 
       if (size > 1) {
+        setTimeout(() => {
+          setLoaderIsVisible(false);
+        }, 1000);
         setTimeline(DAILY);
         setGraphData(json["Time Series (Daily)"]);
 
@@ -75,6 +81,7 @@ function App() {
         const overviewInfoJson = await overview.json();
         setOverviewInfo(overviewInfoJson);
       } else {
+        setLoaderIsVisible(false);
         setErrorMessageIsVisible(true);
       }
 
@@ -153,6 +160,7 @@ function App() {
         closeErrorMessage={closeErrorMessage}
         errorMessageIsVisible={errorMessageIsVisible}
       />
+      {loaderIsVisible && <Loader />}
     </AppWrapper>
   );
 }
