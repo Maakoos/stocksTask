@@ -35,6 +35,11 @@ const SearchInput = styled.input`
   text-transform: uppercase;
   border: none;
   outline: transparent;
+
+  &::placeholder {
+    color: #a0a0a0;
+    font-size: 20px;
+  }
 `;
 
 const ClearBtn = styled.button`
@@ -127,6 +132,7 @@ function SearchBar({
       <InputWrapper>
         <SearchInput
           type="text"
+          placeholder="enter the symbol/name"
           value={inputValue}
           onChange={changeInputValue}
           ref={inputRef}
