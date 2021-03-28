@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.js": "/stocksTask/static/js/main.f3d7666f.chunk.js",
-    "main.js.map": "/stocksTask/static/js/main.f3d7666f.chunk.js.map",
+    "main.js": "/stocksTask/static/js/main.cdf4f66c.chunk.js",
+    "main.js.map": "/stocksTask/static/js/main.cdf4f66c.chunk.js.map",
     "runtime-main.js": "/stocksTask/static/js/runtime-main.f4471378.js",
     "runtime-main.js.map": "/stocksTask/static/js/runtime-main.f4471378.js.map",
     "static/js/2.799ceb6a.chunk.js": "/stocksTask/static/js/2.799ceb6a.chunk.js",
@@ -16,6 +16,6 @@
   "entrypoints": [
     "static/js/runtime-main.f4471378.js",
     "static/js/2.799ceb6a.chunk.js",
-    "static/js/main.f3d7666f.chunk.js"
+    "static/js/main.cdf4f66c.chunk.js"
   ]
 }
